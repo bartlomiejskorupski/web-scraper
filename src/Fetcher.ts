@@ -1,8 +1,7 @@
-import { url, meta } from "./env";
+import { url, headers } from "./env";
 import { Kosiarka } from "./Kosiarka";
 import { Observable, Subject } from "rxjs";
-const nodeFetch = require('node-fetch');
-const cheerio = require('cheerio');
+import * as cheerio from 'cheerio';
 
 export class Fetcher {
 
@@ -13,8 +12,7 @@ export class Fetcher {
   constructor() { }
 
   fetchWebsite() {
-    const headers = new nodeFetch.Headers(meta);
-    nodeFetch(url, { "headers": headers })
+    fetch(url, { headers })
     .then((res) => {
       return res.text();
     })
@@ -29,7 +27,7 @@ export class Fetcher {
   }
   
   fetchSuccessful(data) {
-    const $ = cheerio.load(data)
+    const $ = cheerio.load(data);
   
     const products = $('.product-list').children()
       .map(function (i, el) {

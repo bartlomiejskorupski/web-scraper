@@ -1,16 +1,22 @@
-import { take } from "rxjs";
-import { Kosiarka } from "./Kosiarka";
+import { Kosiarka } from './Kosiarka';
 import { Fetcher } from "./Fetcher";
 
 const fetcher: Fetcher = new Fetcher();
 
-let kosiarki: Kosiarka[];
+let kosiarki: Kosiarka[] = [];
 
-fetcher.productsObs
-  .pipe(take(1))
-  .subscribe((products: Kosiarka[]) => {
-    kosiarki = products;
-    console.log(kosiarki);
+const sub = fetcher.productsObs
+  .subscribe({
+    next: ({pageInfo, donePercent, products}) => {
+      kosiarki = products;
+      console.log('\n\n' + donePercent.toFixed(2) + '%');
+      console.log(`Page: ${pageInfo.pageNo}/${pageInfo.outOf}`);
+      console.log(`Number of found products: ${products.length}`);
+    },
+    complete: () => {
+      console.log('Done.');
+      sub.unsubscribe();
+    }
   });
 
-fetcher.fetchWebsite();
+fetcher.scrapeWebsite();

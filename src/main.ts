@@ -1,5 +1,6 @@
 import { Kosiarka } from './Kosiarka';
 import { Fetcher } from "./Fetcher";
+import * as fs from 'fs';
 
 const fetcher: Fetcher = new Fetcher();
 
@@ -13,7 +14,11 @@ const sub = fetcher.productsObs
       console.log(`Page: ${pageInfo.pageNo}/${pageInfo.outOf}`);
       console.log(`Number of found products: ${products.length}`);
     },
+    error: (err) => {
+      console.log(err);
+    },
     complete: () => {
+      fs.writeFileSync('./out/out.json', JSON.stringify({"products": kosiarki}));
       console.log('Done.');
       sub.unsubscribe();
     }

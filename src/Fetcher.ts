@@ -15,7 +15,6 @@ export interface ScraperResponse {
 }
 
 export class Fetcher {
-
   private productsSubject = new Subject<ScraperResponse>();
   productsObs = this.productsSubject.asObservable();
 
@@ -41,7 +40,7 @@ export class Fetcher {
       this.productsSubject.next({pageInfo, donePercent, products});
 
       nextPageUrl = this.findNextPageUrl(data);
-      await sleep(1000);
+      await sleep(100);
     }
 
     this.productsSubject.complete();

@@ -1,32 +1,24 @@
-import { baseUrl, url, headers } from "./env";
-import { Kosiarka } from "./Kosiarka";
-import { Subject } from "rxjs";
+import { headers, sleep } from "../env";
+import { Product } from "../product";
+import { Observable, Subject } from "rxjs";
 import * as cheerio from 'cheerio';
+import { ScraperProgress, Scraper } from './scraper';
 
-const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
+export class LeroyScraper implements Scraper{
+  private progress = new Subject<ScraperProgress>();
+  readonly progressObs = this.progress.asObservable();
 
-export interface ScraperResponse {
-  pageInfo: {
-    pageNo: number,
-    outOf: number
-  };
-  donePercent: number;
-  products: Kosiarka[];
-}
+  readonly baseUrl = 'https://www.leroymerlin.pl';
+  private startUrl = 'https://www.leroymerlin.pl/maszyny-ogrodnicze/kosiarki-traktorki-roboty-koszace,a28.html';
 
-export class Fetcher {
-  private productsSubject = new Subject<ScraperResponse>();
-  productsObs = this.productsSubject.asObservable();
+  async scrapePage() {
+    const products: Product[] = [];
 
-  async scrapeWebsite() {
-    let nextPageUrl = url;
-
-    const products: Kosiarka[] = [];
-
+    let nextPageUrl = this.startUrl;
     while(nextPageUrl) {
       const response = await fetch(nextPageUrl, { headers });
       if(!response.ok) {
-        this.productsSubject.error(new Error('Error fetching website'));
+        this.progress.error(new Error('Error fetching website'));
         break;
       }
       const data = await response.text();
@@ -37,13 +29,14 @@ export class Fetcher {
       const pageInfo = this.getPageInfo(data);
       const donePercent = 100.0*(pageInfo.pageNo / pageInfo.outOf);
 
-      this.productsSubject.next({pageInfo, donePercent, products});
+      this.progress.next({pageInfo, donePercent, products});
 
       nextPageUrl = this.findNextPageUrl(data);
       await sleep(100);
     }
 
-    this.productsSubject.complete();
+    this.progress.complete();
+    return products;
   }
 
   private getPageInfo(data: string): { pageNo: number, outOf: number} {
@@ -63,13 +56,13 @@ export class Fetcher {
     const nextPageUrl = $('.paging > a.next').first().attr('href');
     //console.log('Found next page url: "' + nextPageUrl + '"');
     
-    return nextPageUrl === '#' ? '' : baseUrl + nextPageUrl;
+    return nextPageUrl === '#' ? '' : this.baseUrl + nextPageUrl;
   }
   
-  private findProducts(data: string): Kosiarka[] {
+  private findProducts(data: string): Product[] {
     const $ = cheerio.load(data);
   
-    const products = $('.product-list').children()
+    const products: Product[] = $('.product-list').children()
       .map(function (i, el) {
         const name = $(this).find('.title').text().trim();
         const integer: string = $(this).find('.integer').first().text().trim();
@@ -78,11 +71,10 @@ export class Fetcher {
         let price: string | number = integer + fractional;
         price = +price.replace(',', '.').replace(/\s+/g, '');
   
-        const kosiarka: Kosiarka = { 
+        return {
           name: name,
           price: price
-        }
-        return kosiarka
+        };
       })
       .toArray()
       .filter((o: { name: string }) => !!(o.name));

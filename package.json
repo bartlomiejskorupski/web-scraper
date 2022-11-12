@@ -6,6 +6,8 @@
     "typescript": "^4.8.4"
   },
   "scripts": {
-    "start": "ts-node src/main.ts"
+    "leroy": "ts-node src/main.ts leroy",
+    "allegro": "ts-node src/main.ts allegro",
+    "test": "ts-node src/test.ts"
   }
 }

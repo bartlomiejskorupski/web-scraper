@@ -2,12 +2,13 @@ import { Observable } from "rxjs";
 import { Product } from "../product";
 
 export interface ScraperProgress {
-  pageInfo: {
-    pageNo: number,
+  status?: string;
+  elemInfo?: {
+    elemNo: number,
     outOf: number
   };
-  donePercent: number;
-  products: Product[];
+  donePercent?: number;
+  products?: Product[];
 }
 
 export interface Scraper {

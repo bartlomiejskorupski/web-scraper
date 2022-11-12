@@ -1,5 +1,7 @@
 export interface Product {
   name?: string;
   price?: number;
-  attributes?: { [name: string]: string }
+  imgFileName?: string;
+  rating?: number;
+  attributes?: { [name: string]: string };
 };

@@ -26,7 +26,14 @@ export class AllegroScraper implements Scraper {
       const maxPageNo = this.findMaxPageNo(data);
       const donePercent = 100.0*(pageNo / maxPageNo)/2.0;
 
-      this.progress.next({pageInfo: {pageNo, outOf: maxPageNo}, donePercent, products: []});
+      this.progress.next({
+        elemInfo: {
+          elemNo: pageNo, 
+          outOf: maxPageNo
+        }, 
+        donePercent, 
+        products: []
+      });
 
       if(pageNo !== maxPageNo) {
         nextPageUrl = this.startUrl + `?p=${pageNo + 1}`;

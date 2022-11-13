@@ -1,5 +1,5 @@
 import { Observable, Subject } from 'rxjs';
-import { headers, sleep, waitForEnter } from '../env';
+import { headers, sleep } from '../env';
 import { Product } from '../product';
 import { Scraper, ScraperProgress } from './scraper';
 import * as fs from 'fs';
@@ -79,7 +79,7 @@ export class AllegroScraper implements Scraper {
       while(true) {
         const res = await fetch(url, { headers });
         data = await res.text();
-        fs.writeFileSync('./out/test.html', data);
+        //fs.writeFileSync('./out/test.html', data);
   
         console.log('Status: ' + res.status + ' ' + res.statusText);
   
@@ -89,7 +89,7 @@ export class AllegroScraper implements Scraper {
         }
   
         console.log('Dupa, aplikacja przekroczyła limit zapytań.');
-        await waitForEnter();
+        await sleep(10000);
       }
       resolve(data);
     });

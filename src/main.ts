@@ -5,7 +5,11 @@ import { AllegroScraper } from './scraper/allegro-scraper';
 import { auditTime } from 'rxjs';
 
 async function main() {
-  const scraper = process.argv[2] === 'leroy' ? new LeroyScraper() : new AllegroScraper();
+  const scraper = process.argv[2] === 'allegro' ? new AllegroScraper() : new LeroyScraper();
+
+  if(!fs.existsSync('./out/images')) {
+    fs.mkdirSync('./out/images', {recursive: true});
+  }
 
   const sub = scraper.progressObs
     .subscribe({

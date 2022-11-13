@@ -123,9 +123,10 @@ export class LeroyScraper implements Scraper {
           && !!$(el).find('td.item').first().text().trim()
       })
       .map((i, el) => {
-        const key = $(el).find('td.item').first().text().trim();
-        let value = $(el).find('td.value.item').first().text().trim();
-        return { key, value };
+        return {
+          key: $(el).find('td.item').first().text().trim(),
+          value: $(el).find('td.value.item').first().text().trim()
+        }
       })
       .filter((i, attr) => attr.key !== 'Cena')
       .toArray();

@@ -3,5 +3,8 @@ export interface Product {
   price?: number;
   imgFileName?: string;
   rating?: number;
-  attributes?: { [name: string]: string };
+  description?: string;
+  attributes?: {
+    [key: string]: string | number;
+  };
 };

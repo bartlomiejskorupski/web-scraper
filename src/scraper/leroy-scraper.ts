@@ -51,6 +51,10 @@ export class LeroyScraper implements Scraper {
   private async scrapeProductPages(urls: string[]): Promise<Product[]> {
     const products: Product[] = [];
 
+    if(!fs.existsSync('./out/images')) {
+      fs.mkdirSync('./out/images', {recursive: true});
+    }
+
     let i = 0;
     while(i < urls.length) {
       const url = urls[i];

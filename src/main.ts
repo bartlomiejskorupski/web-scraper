@@ -1,11 +1,10 @@
 import { Product } from './product';
 import { LeroyScraper } from "./scraper/leroy-scraper";
 import * as fs from 'fs';
-import { AllegroScraper } from './scraper/allegro-scraper';
 import { auditTime } from 'rxjs';
 
 async function main() {
-  const scraper = process.argv[2] === 'allegro' ? new AllegroScraper() : new LeroyScraper();
+  const scraper = new LeroyScraper();
 
   const sub = scraper.progressObs
     .subscribe({

@@ -2,7 +2,7 @@ import { headers, sleep } from "../env";
 import { Product } from "../product";
 import { Observable, Subject } from "rxjs";
 import * as cheerio from 'cheerio';
-import { ScraperProgress, Scraper } from './scraper';
+import { ScraperProgress, Scraper, ScraperResult, Category } from './scraper';
 import * as fs from 'fs';
 
 export class LeroyScraper implements Scraper {
@@ -10,12 +10,65 @@ export class LeroyScraper implements Scraper {
   readonly progressObs = this.progress.asObservable();
 
   readonly baseUrl = 'https://www.leroymerlin.pl';
-  private startUrl = 'https://www.leroymerlin.pl/maszyny-ogrodnicze/kosiarki-traktorki-roboty-koszace,a28.html';
+  private startUrl = 'https://www.leroymerlin.pl/maszyny-ogrodnicze,a19.html';
 
-  async scrapePage(): Promise<Product[]> {
+  async scrapeWebsite(): Promise<ScraperResult> {
+    let data: string;
+    while(true) {
+      const catRes = await fetch(this.startUrl, { headers });
+      if(catRes.ok) {
+        data = await catRes.text();
+        break;
+      }
+      const status = 'Status: ' + catRes.status + ' ' + catRes.statusText + '\nTrying again after 5s...';
+      this.progress.next({status});
+      await sleep(5000);
+    }
+
+    const categories = this.findCategories(data);
+
+    const result: ScraperResult = {};
+    for(const category of categories) {
+      const catResult: Category = {};
+      for(const sub of category.subs) {
+        const subProducts = await this.scrapePage(sub.url);
+        catResult[sub.name] = subProducts;
+      }
+      result[category.name] = catResult;
+    }
+    
+    this.progress.complete();
+    return result;
+  }
+
+  private findCategories(data: string): {name: string, subs: {name: string, url: string}[]}[] {
+    const $ = cheerio.load(data);
+
+    const categories = $('#product-categories > .content > .list')
+      .map((i, el) => {
+        const catName = $(el).find('h2 > a').first().text().trim();
+        const subCats = $(el).find('ul').first().children()
+          .filter((i, el) => el.name === 'li')
+          .map((i, el) => {
+            const subCatA  = $(el).find('a').first();
+            return { 
+              name: subCatA.text().trim(),
+              url: this.baseUrl + subCatA.attr('href')
+            }
+          }).toArray();
+        return {
+          name: catName,
+          subs: subCats
+        }
+      }).toArray();
+
+    return categories;
+  }
+
+  async scrapePage(url: string): Promise<Product[]> {
     const productUrls: string[] = [];
 
-    let nextPageUrl = this.startUrl;
+    let nextPageUrl = url;
     while(nextPageUrl) {
       const response = await fetch(nextPageUrl, { headers });
       
@@ -44,7 +97,6 @@ export class LeroyScraper implements Scraper {
 
     const products = await this.scrapeProductPages(productUrls);
 
-    this.progress.complete();
     return products;
   }
 
@@ -152,9 +204,12 @@ export class LeroyScraper implements Scraper {
   private findNextPageUrl(data: string): string {
     const $ = cheerio.load(data);
 
-    const nextPageUrl = $('.paging > a.next').first().attr('href');
+    let nextPageUrl = $('.paging > a.next').first().attr('href');
     
-    return nextPageUrl === '#' ? '' : this.baseUrl + nextPageUrl;
+    if(!nextPageUrl || nextPageUrl === '#') {
+      return undefined;
+    }
+    return this.baseUrl + nextPageUrl;
   }
   
   private findProductUrls(data: string): string[] {

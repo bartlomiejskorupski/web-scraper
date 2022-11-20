@@ -1,6 +1,14 @@
 import { Observable } from "rxjs";
 import { Product } from "../product";
 
+export interface Category {
+  [subcategory: string]: Product[];
+}
+
+export interface ScraperResult {
+  [category: string]: Category;
+}
+
 export interface ScraperProgress {
   status?: string;
   elemInfo?: {
@@ -14,5 +22,5 @@ export interface ScraperProgress {
 export interface Scraper {
   readonly baseUrl: string;
   readonly progressObs: Observable<ScraperProgress>
-  scrapePage: () => Promise<Product[]>;
+  scrapeWebsite: () => Promise<ScraperResult>;
 }

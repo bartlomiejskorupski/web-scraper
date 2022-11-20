@@ -23,10 +23,10 @@ async function main() {
       }
     });
   
-  const products = await scraper.scrapePage();
+  const result = await scraper.scrapeWebsite();
 
-  console.log('Saving ' + products.length + ' products.');
-  fs.writeFileSync('./out/out.json', JSON.stringify({"products": products}));
-}
+  console.log("Saving results.");
+  fs.writeFileSync('./out/out.json', JSON.stringify(result));
+};
 
 main();

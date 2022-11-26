@@ -6,7 +6,7 @@
     "typescript": "^4.8.4"
   },
   "scripts": {
-    "start": "ts-node src/main.ts leroy",
-    "test": "ts-node src/test.ts"
+    "start": "ts-node src/main.ts",
+    "imports": "ts-node src/main.ts imports"
   }
 }

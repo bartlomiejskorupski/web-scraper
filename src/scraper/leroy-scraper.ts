@@ -1,4 +1,5 @@
-import { headers, sleep } from "../env";
+import { sleep } from "../utils";
+import { headers } from "../env";
 import { Product } from "../product";
 import { Observable, Subject } from "rxjs";
 import * as cheerio from 'cheerio';
@@ -140,7 +141,8 @@ export class LeroyScraper implements Scraper {
 
     const imgHref = $('section.product-card.product-card-wrapper .product-gallery > .photo-container > a.product-big-photo.js-init-gallery > img.custom-attrs').first().attr('src');
     const imgFileName = imgHref.substring(imgHref.lastIndexOf('/') + 1);
-    fetch(imgHref).then(this.downloadProductImage(imgFileName));
+
+    // fetch(imgHref).then(this.downloadProductImage(imgFileName));
 
     const name = $('.product-description > .product-header > .product-title > h1').first().text().trim();
     const price = +$('.product-right-data > .product-buy-data > .prices-top > .product-price.size-big').attr('data-price');
@@ -150,7 +152,7 @@ export class LeroyScraper implements Scraper {
     rating = rating || undefined;
     const attributes = this.getProductAttributes(data);
 
-    return { name, price, rating, imgFileName, description, attributes };
+    return { name, price, rating, imgFileName: imgHref, description, attributes };
   }
 
   private downloadProductImage = (imgFileName: string) => (res: Response) => {
@@ -168,7 +170,7 @@ export class LeroyScraper implements Scraper {
     }));
   };
 
-  private getProductAttributes(data: string): {[key: string]: string | number} {
+  private getProductAttributes(data: string): {[key: string]: string } {
     const $ = cheerio.load(data);
 
     const attrRows = $('#productTab .tab-content > .content > table.product-attributes-list > tbody')
@@ -187,7 +189,7 @@ export class LeroyScraper implements Scraper {
       .filter((i, attr) => attr.key !== 'Cena')
       .toArray();
     
-    const attributes: {[key: string]: string | number} = {};
+    const attributes: {[key: string]: string } = {};
     attrRows.forEach((row) => attributes[row.key] = row.value);
     return attributes;
   }

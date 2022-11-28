@@ -5,6 +5,6 @@ export interface Product {
   rating?: number;
   description?: string;
   attributes?: {
-    [key: string]: string | number;
+    [key: string]: string;
   };
 };

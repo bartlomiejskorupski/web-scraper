@@ -2,7 +2,7 @@ import { Product } from './product';
 import { LeroyScraper } from "./scraper/leroy-scraper";
 import * as fs from 'fs';
 import { auditTime } from 'rxjs';
-import { writeImports } from './import-writer';
+import { writeImports } from './importer/import-writer';
 import { ScraperResult } from './scraper/scraper';
 
 const runScraper = async (): Promise<ScraperResult> => {

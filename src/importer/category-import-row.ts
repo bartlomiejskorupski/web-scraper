@@ -1,3 +1,14 @@
+// OPCJE
+// 
+// Usuń wszystkie kategorie przed importem: TAK
+// Pomiń ponowne generowanie miniatur: NIE
+// Wymuś wszystkie numery ID: NIE
+// Wyślij e-mail z powiadomieniem: NIE
+// 
+
+const FIELD_SEP = ';';
+const MV_SEP = '|';
+
 export class CategoryImportRow {
   "ID" = '';
   "Active (0/1)" = '';
@@ -26,9 +37,6 @@ export class CategoryImportRow {
   }
 
 }
-
-const FIELD_SEP = ';';
-const MV_SEP = '|';
 
 const HEADERS = [
   'ID',

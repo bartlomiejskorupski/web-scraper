@@ -1,4 +1,18 @@
+// OPCJE
+//
+// Usuń wszystkie produkty przed importem: TAK
+// Użyć indeksu produktu jako klucza: TAK
+// Pomiń ponowne generowanie miniatur: NIE
+// Wymuś wszystkie numery ID: TAK
+// Wyślij e-mail z powiadomieniem: NIE
+//
+
+
+const FIELD_SEP = '|';
+const MV_SEP = '$';
+
 export class ProductImportRow {
+  "ID" = '';
   "Aktywny (0 lub 1)" = '';
   "Nazwa" = '';
   "Kategorie (x,y,z...)" = '';
@@ -83,9 +97,6 @@ export class ProductImportRow {
   }
 
 }
-
-const FIELD_SEP = '|';
-const MV_SEP = '$';
 
 const HEADERS = [
   'ID',

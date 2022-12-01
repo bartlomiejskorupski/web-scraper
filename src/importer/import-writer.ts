@@ -82,7 +82,6 @@ const productToCombinations = (prod: Product, category: string, subcategory, id:
     row['Magazyn'] = '0';
     row['Zależny od stanu magazynowego'] = '0';
     row['Wyślij do mnie e-mail, gdy ilość jest poniżej tego poziomu'] = '0';
-    row['kod EAN13'] = prod.attributes['Kod EAN:'];
     row['Wybierz z pośród zdjęć produktów wg pozycji (1,2,3...)'] = '1';
     //row['Adresy URL zdjęcia (x,y,z...)'] = prod.imgFileName;
     //row['Tekst alternatywny dla zdjęć (x,y,z...)'] = prod.name;

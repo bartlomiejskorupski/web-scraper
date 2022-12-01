@@ -54,12 +54,12 @@ const writeProducts = (result: ScraperResult) => {
 
 const productToCombinations = (prod: Product, category: string, subcategory, id: number): CombinationImportRow[] => {
   const warranty = {
-    name: 'Gwarancja',
-    type: 'select',
+    name: 'Gwarancja (W latach)',
+    type: 'radio',
     selections: [
       { value: '1', multiplier: 0, default: '1'},
-      { value: '2', multiplier: 0.2, default: '0' },
-      { value: '3', multiplier: 0.35, default: '0'}
+      { value: '2', multiplier: 0.1, default: '0' },
+      { value: '3', multiplier: 0.15, default: '0'}
     ]
   };
 
@@ -73,7 +73,7 @@ const productToCombinations = (prod: Product, category: string, subcategory, id:
     row['Wartość (Wartość:Pozycja)*'] = [select.value, '0'].join(':');
     row['Wpływ na cenę'] = ''+((+prod.price)*select.multiplier).toFixed(2);
     row['Podatek ekologiczny'] = '0';
-    row['Ilość'] = '500'; //
+    row['Ilość'] = '500'; // ?
     row['Minimalna ilość'] = '1';
     row['Wpływ na wagę'] = '0';
     row['Domyślny (0 = Nie, 1 = Tak)'] = select.default;
@@ -101,7 +101,7 @@ const productToRow = (prod: Product, category: string, subcategory, id: number):
   row['Kategorie (x,y,z...)'] = subcategory; // ?
   row['Cena zawiera podatek. (brutto)'] = prod.price+'';
   row['ID reguły podatku'] = '1';
-  row['W sprzedaży (0 lub 1)'] = '1';
+  row['W sprzedaży (0 lub 1)'] = '0';
   //row['Indeks #'] = prod.attributes['Numer referencyjny:'];
   row['Indeks #'] = ''+id;
   row['Kod dostawcy'] = '';
@@ -154,15 +154,18 @@ const createFeatureString = (prod: Product): string => {
   const fieldLimit = 255;
   let featuresLength = 0;
   let removedFeatures = 0;
-
+  let position = 0;
   const attrString = Object.keys(attr)
     .filter(key => !ignored.includes(key))
     .map(key => {
       const name = key.replaceAll(':', ''); // Usuń ':'
       const value = attr[key].replaceAll(':', ' '); // Zamień na spację
-      return name + ':' + value;
+      return [name, value].join(':');
     })
     .sort((a , b) => a.length - b.length)
+    .map(feature => {
+      return [feature, ''+(position++), '0'].join(':');
+    })
     .filter(feature => {
       //console.log(feature);
       if((featuresLength + feature.length + 1) <= fieldLimit) {
@@ -174,10 +177,10 @@ const createFeatureString = (prod: Product): string => {
     })
     .join(ProductImportRow.getMvSep());
 
-  if(removedFeatures) {
-    //console.log('\n'+prod.name);
-    //console.log('Removed features:', removedFeatures);
-  }
+  // if(removedFeatures) {
+  //   console.log('\n'+prod.name);
+  //   console.log('Removed features:', removedFeatures);
+  // }
 
   return attrString;
 };

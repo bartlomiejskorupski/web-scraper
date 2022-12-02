@@ -1,0 +1,50 @@
+Pliki importu znajdują się w /out/imports/
+
+Importowanie kategorii:
+
+  Plik: import_kategorie_pl.csv
+
+  Separator pola: ';'
+  Separator wielokrotnych wartości: '|'
+
+  Usuń wszystkie kategorie przed importem:
+    TAK
+  Pomiń ponowne generowanie miniatur:
+    NIE
+  Wymuś wszystkie numery ID:
+    NIE
+  Wyślij e-mail z powiadomieniem:
+    NIE
+
+Importowanie produktów:
+
+  Plik: import_produkty_pl.csv
+
+  Separator pola: '|'
+  Separator wielokrotnych wartości: '$'
+
+  Usuń wszystkie produkty przed importem:
+    TAK
+  Użyć indeksu produktu jako klucza:
+    TAK
+  Pomiń ponowne generowanie miniatur:
+    NIE
+  Wymuś wszystkie numery ID:
+    TAK
+  Wyślij e-mail z powiadomieniem:
+    NIE
+
+Importowanie produktów:
+
+  Plik: import_kombinacje_pl.csv
+
+  Separator pola: '|'
+  Separator wielokrotnych wartości: '$'
+
+  Usuń wszystkie kombinacje przed importem:
+    TAK
+  Użyć indeksu produktu jako klucza:
+    TAK
+  Wyślij e-mail z powiadomieniem:
+    NIE
+
